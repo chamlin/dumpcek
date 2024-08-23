@@ -1,5 +1,7 @@
 module namespace header='http://marklogic.com/dumpcek/header';
 
+declare variable $header:default-collection := 'None';
+
 declare function header:set-collection-form ($collection, $home-page) {
         <form action='{$home-page}'>
             <div>
@@ -24,7 +26,7 @@ declare function header:get-cookie-map ($cookie-string) {
 
 declare function header:get-collection-value () {
     let $cookies :=  header:get-cookie-map (xdmp:get-request-header ('Cookie'))
-    return (xdmp:get-request-field ('collection'), map:get ($cookies, 'collection'), 'None')[1]
+    return (xdmp:get-request-field ('collection'), map:get ($cookies, 'collection'), $header:default-collection)[1]
 };
 
 declare function header:set-collection-cookie ($collection) {
