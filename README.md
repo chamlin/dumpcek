@@ -16,7 +16,7 @@ Set up an app server with the modules pointing to the src directory on disk.
 
 ### load
 
-Load the files, use a collection
+Load the files to the app-servers content database, use a collection:
 
 ~/mlcp/mlcp-10.0.6.2/bin/mlcp.sh  import -host localhost -port 8000 -username admin -password admin -input_file_path ./Support-Dump/ -mode local -output_collections timestamp-check -database dumpcek
 
