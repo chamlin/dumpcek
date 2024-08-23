@@ -38,6 +38,10 @@ return
                         if ($report = 'None') then ()
                         else if ($report = 'merge-params') then reports:get-merge-params-table ($collection)
                         else if ($report = 'forest-state') then reports:get-forest-state-table ($collection)
+                        else if ($report = 'zombies') then (
+                            <h4>Checked for zombie transactions</h4>,
+                            reports:check-zombie-transactions ($collection)
+                        )
                         else ()
                     )
                 }

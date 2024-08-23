@@ -70,6 +70,29 @@ declare function reports:get-forest-state-table ($collection) {
 };
 
 
+(: zombie transactions :)
+
+(:
+This just gets the forest-status xmls from a dump using a hack that may or may not work. you need the forest-status xmls however you get them.
+You could also use xdmp:forest-status for a db's forests to get them directly; if you use xdmp:database-forests, make sure to get the replicas too!
+:)
+declare function reports:check-zombie-transactions ($collection) {
+    let $fs := files:get-file ($collection, 'Forest-Status.xml')/fs:forest-status
+    (: now, look for forests that are coordinating transactions, but which aren't open :)
+    for $coordinating-not-open in $fs[fs:forest-id = fn:distinct-values ($fs//fs:coordinator-id/fn:data()) and fs:state != 'open']
+    let $coordinator-id := $coordinating-not-open/fs:forest-id/fn:data()
+    return
+        let $acting-master := $fs[fs:forest-id/fn:data() = $coordinating-not-open/fs:current-master-forest/fn:data()]
+        let $transaction-dts :=
+           for $dt in ($fs//fs:transaction-participant[fs:coordinator-id = $coordinator-id]/fs:min-commit-timestamp/fn:data() ! xdmp:timestamp-to-wallclock (.))
+           order by $dt ascending
+           return $dt
+        return (
+            'Consider flipping '||$acting-master/fs:forest-name/fn:string()||' to '||$coordinating-not-open/fs:forest-name/fn:string()||' to clear stuck transaction.',
+            'Transaction timestamps affected: ', $transaction-dts,
+            ''
+        )
+};
 
 
 (: generic table :)
