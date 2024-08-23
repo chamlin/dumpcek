@@ -5,8 +5,13 @@ declare variable $header:default-collection := 'None';
 declare function header:set-collection-form ($collection, $home-page) {
         <form action='{$home-page}'>
             <div>
-                <label for='collection'>Choose a collection: </label>
-                <input type='text' id='collection' name='collection' value='{$collection}'/>
+                <label for='colection-select'>Choose a collection: </label>
+                <select name="collection" id="collection-select">
+                  <option value="None">--Please choose a collection</option>
+                { for $collection in cts:collections()
+                  return <option value="{$collection}">{$collection}</option>
+                }
+                </select>
             </div>
             <div>
                 <button>Submit</button>
@@ -18,10 +23,10 @@ declare function header:set-report-form ($collection, $home-page) {
         <form action='{$home-page}'>
             <div>
                 <label for='report-select'>Choose a report: </label>
-<select name="reports" id="report-select">
-  <option value="">--Please choose an option--</option>
-  <option value="merge-params">Merge parameters</option>
-</select>
+                <select name="report" id="report-select">
+                  <option value="None">--Please choose an option--</option>
+                  <option value="merge-params">Merge parameters</option>
+                </select>
             </div>
             <div>
                 <button>Submit</button>

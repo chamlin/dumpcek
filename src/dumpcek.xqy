@@ -9,10 +9,13 @@ declare function local:dump-type ($collection) {
     return fn:string-join (fn:tokenize (fn:normalize-space ($string), ' Report '), '; Report ')
 };
 
+
 let $content := xdmp:set-response-content-type('text/html')
 let $collection := header:get-collection-value ()
 let $cookie := header:set-collection-cookie ($collection)
 let $database-name := xdmp:database-name (xdmp:database())
+
+let $report := (xdmp:get-request-field ('report'), 'None')[1]
 
 
 return
@@ -31,7 +34,9 @@ return
         <hr/>,local:dump-type($collection),
         <hr/>,header:set-report-form($collection, $local:home-page),
         <hr/>,
-        reports:get-merge-params-table ($collection)
+        if ($report = 'None') then ()
+        else if ($report = 'merge-params') then reports:get-merge-params-table ($collection)
+        else ()
     )
 }
     </body>
