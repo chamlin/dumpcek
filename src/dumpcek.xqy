@@ -24,21 +24,23 @@ return
   <head>
     <meta charset='utf-8' />
     <title>My test page</title>
+    <link rel="stylesheet" href="dumpcek.css"/>
   </head>
     <body>
-        <h1>Using database {$database-name}</h1>
+        <h1>Using database {$database-name, if ($collection != 'None') then ' with collection '||$collection else ()}</h1>
         <hr/>
         <div>{header:set-collection-form($collection, $local:home-page)}</div>
-{
-    if ($collection = $header:default-collection) then () else (
-        <hr/>,local:dump-type($collection),
-        <hr/>,header:set-report-form($collection, $local:home-page),
-        <hr/>,
-        if ($report = 'None') then ()
-        else if ($report = 'merge-params') then reports:get-merge-params-table ($collection)
-        else ()
-    )
-}
+                {
+                    if ($collection = $header:default-collection) then () else (
+                        <hr/>,local:dump-type($collection),
+                        <hr/>,header:set-report-form($collection, $local:home-page),
+                        <hr/>,
+                        if ($report = 'None') then ()
+                        else if ($report = 'merge-params') then reports:get-merge-params-table ($collection)
+                        else if ($report = 'forest-state') then reports:get-forest-state-table ($collection)
+                        else ()
+                    )
+                }
     </body>
 </html>
 )

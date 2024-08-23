@@ -26,6 +26,7 @@ declare function header:set-report-form ($collection, $home-page) {
                 <select name="report" id="report-select">
                   <option value="None">--Please choose an option--</option>
                   <option value="merge-params">Merge parameters</option>
+                  <option value="forest-state">Forest state/timestamp</option>
                 </select>
             </div>
             <div>
