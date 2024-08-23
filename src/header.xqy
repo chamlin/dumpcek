@@ -14,6 +14,21 @@ declare function header:set-collection-form ($collection, $home-page) {
         </form>
 };
 
+declare function header:set-report-form ($collection, $home-page) {
+        <form action='{$home-page}'>
+            <div>
+                <label for='report-select'>Choose a report: </label>
+<select name="reports" id="report-select">
+  <option value="">--Please choose an option--</option>
+  <option value="merge-params">Merge parameters</option>
+</select>
+            </div>
+            <div>
+                <button>Submit</button>
+            </div>
+        </form>
+};
+
 declare function header:get-cookie-map ($cookie-string) {
     let $cookie-map := map:new (
         let $cookies := fn:tokenize ($cookie-string, '; ')
