@@ -30,16 +30,6 @@ declare function reports:get-merge-params ($collection) {
     return $maps
 };
 
-declare function reports:get-merge-params-tableX ($collection) {
-    let $results := reports:get-merge-params ($collection)
-    let $columns := ('database-name','merge-priority','merge-max-size','merge-min-size','merge-min-ratio','merge-timestamp','retain-until-backup', 'merge-blackouts')
-    let $config := map:new ((map:entry ('columns', $columns), map:entry ('caption', 'Merge parameters for databases in dump.')))
-    let $mom := mom:result-to-mom ($config, $results)
-    let $table := mom:table ($mom)
-    return $table
-};
-
-
 declare function reports:get-merge-params-table ($collection) {
     let $results := reports:get-merge-params ($collection)
     let $columns := ('database-name','merge-priority','merge-max-size','merge-min-size','merge-min-ratio','merge-timestamp','retain-until-backup', 'merge-blackouts')

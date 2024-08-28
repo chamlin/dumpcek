@@ -2,11 +2,17 @@ import module namespace header='http://marklogic.com/dumpcek/header' at 'header.
 import module namespace files='http://marklogic.com/dumpcek/files' at 'files.xqy';
 import module namespace reports='http://marklogic.com/dumpcek/reports' at 'reports.xqy';
 
+declare namespace c = 'http://marklogic.com/xdmp/clusters';
+
 declare variable $local:home-page := '/dumpcek.xqy';
 
 declare function local:dump-type ($collection) {
     let $string := (files:get-file ($collection, 'Support-Request.txt'), 'No dump report found for collection '||$collection||'.')[1]
-    return fn:string-join (fn:tokenize (fn:normalize-space ($string), ' Report '), '; Report ')
+    let $report-line := fn:string-join (fn:tokenize (fn:normalize-space ($string), ' Report '), '; Report ')
+    let $clusters := files:get-file ($collection, 'clusters.xml', 1)
+    let $effective := $clusters/c:clusters/c:effective-version/fn:string()
+    let $security := $clusters/c:clusters/c:security-version/fn:string()
+    return ($report-line, <br/>, 'Effective version: '||$effective||'; Security version: '||$security)
 };
 
 
