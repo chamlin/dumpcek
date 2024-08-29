@@ -4,6 +4,7 @@ module namespace reports='http://marklogic.com/dumpcek/reports';
 declare namespace db='http://marklogic.com/xdmp/database';
 declare namespace fs = 'http://marklogic.com/xdmp/status/forest';
 
+import module namespace basics = 'http://marklogic.com/dumpcek/basics' at 'basics.xqy';
 import module namespace files='http://marklogic.com/dumpcek/files' at 'files.xqy';
 import module namespace mom = 'http://marklogic.com/support/map-of-maps' at 'mom.xqy';
 
@@ -53,10 +54,22 @@ declare function reports:get-forest-state ($collection) {
     return $maps
 };
 
+(: declare function reports:up-down-sort-arrows ($col, $up-params, $down-params) { :)
+declare function reports:sort-arrows () {
+    
+    let $up-uri := basics:uri (
+        map:map() => map:with ('sort-on', 'forest-state') => map:with ('sort-order', 'up') => map:with ('report', 'forest-state')
+    )
+    return (<a href="{$up-uri}">^</a>,text{'&nbsp;'},<a href="x">v</a>)
+};
+
 declare function reports:get-forest-state-table ($collection) {
     let $results := reports:get-forest-state ($collection)
     let $columns := ('forest-name','state','last-state-change','nonblocking-timestamp')
-    return reports:generic-table ($columns, $results, 'States and timestamps for forests in dump.')
+    let $headers := map:new ((
+        map:entry ('forest-name', ('Forest state ', 'bing', reports:sort-arrows ()))
+    ))
+    return reports:generic-table ($columns, $results, 'States and timestamps for forests in dump.', $headers)
 };
 
 
@@ -84,10 +97,13 @@ declare function reports:check-zombie-transactions ($collection) {
         )
 };
 
+declare function reports:generic-table ($columns, $results, $caption) {
+        reports:generic-table ($columns, $results, $caption, map:new())
+};
 
 (: generic table :)
-declare function reports:generic-table ($columns, $results, $caption) {
-    let $config := map:new ((map:entry ('columns', $columns), map:entry ('caption', $caption)))
+declare function reports:generic-table ($columns, $results, $caption, $headers) {
+    let $config := map:new ((map:entry ('columns', $columns), map:entry ('caption', $caption), map:entry ('headers', $headers)))
     let $mom := mom:result-to-mom ($config, $results)
     let $table := mom:table ($mom)
     return $table

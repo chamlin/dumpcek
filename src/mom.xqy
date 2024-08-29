@@ -142,10 +142,11 @@ declare function mom:table ($mom as map:map) {
     let $config := map:get ($mom, '_config')
     let $caption := map:get ($config, 'caption')
     let $columns := map:get ($config, 'columns')
+    let $colheads := map:get ($config, 'headers')
     return 
     <table>{
         if ($caption) then <caption>{$caption}</caption> else (),
-        <tr>{$columns ! <th>{.}</th>}</tr>,
+        <tr>{$columns ! <th>{if (map:contains($colheads, .)) then map:get ($colheads, .) else . }</th>}</tr>,
         for $row in map:get ($mom, '_kids')
         return mom:table-row ($config, $row)
         }

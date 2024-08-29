@@ -1,10 +1,10 @@
+import module namespace basics='http://marklogic.com/dumpcek/basics' at 'basics.xqy';
 import module namespace header='http://marklogic.com/dumpcek/header' at 'header.xqy';
 import module namespace files='http://marklogic.com/dumpcek/files' at 'files.xqy';
 import module namespace reports='http://marklogic.com/dumpcek/reports' at 'reports.xqy';
 
 declare namespace c = 'http://marklogic.com/xdmp/clusters';
 
-declare variable $local:home-page := '/dumpcek.xqy';
 
 declare function local:dump-type ($collection) {
     let $string := (files:get-file ($collection, 'Support-Request.txt'), 'No dump report found for collection '||$collection||'.')[1]
@@ -35,11 +35,11 @@ return
     <body>
         <h1>Using database {$database-name, if ($collection != 'None') then ' with collection '||$collection else ()}</h1>
         <hr/>
-        <div>{header:set-collection-form($collection, $local:home-page)}</div>
+        <div>{header:set-collection-form($collection, $basics:home-page)}</div>
                 {
                     if ($collection = $header:default-collection) then () else (
                         <hr/>,local:dump-type($collection),
-                        <hr/>,header:set-report-form($collection, $local:home-page),
+                        <hr/>,header:set-report-form($collection, $basics:home-page),
                         <hr/>,
                         if ($report = 'None') then ()
                         else if ($report = 'merge-params') then reports:get-merge-params-table ($collection)
