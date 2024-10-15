@@ -10,10 +10,6 @@ declare namespace a = 'http://marklogic.com/xdmp/assignments';
 
 declare option xdmp:indent 'yes';
 
-declare function local:forest-name-from-id ($forest-id, $axml) {
-    ($axml//a:assignment[a:forest-id/fn:data() = $forest-id]/a:forest-name/fn:string(), '#######')[1]
-};
-
 declare function local:sort-key ($node as node()) {
   typeswitch($node)
       case element() return 
@@ -61,6 +57,7 @@ declare function local:expand-element-by-localname ($e as element()) {
     )
 };
 
+
 declare function local:change ($node, $axml) {
   typeswitch($node)
       case document-node() return 
@@ -70,7 +67,7 @@ declare function local:change ($node, $axml) {
       case comment() return
           $node
       case text() return 
-          if (fn:node-name ($node/parent::*) = ('db:database-id' ! xs:QName (.))) then
+          if (fn:node-name ($node/parent::*) = $local:numeric-masked) then
                 '#######'
           else if (fn:node-name ($node/parent::*) = ('db:forest-id' ! xs:QName (.))) then
                 ($axml//a:assignment[a:forest-id/fn:data() = xs:unsignedLong($node)]/a:forest-name/fn:string(), '#######')[1]
@@ -78,6 +75,7 @@ declare function local:change ($node, $axml) {
                 $node
       case element() return 
             element { fn:node-name ($node) } {
+                (: TODO?  convert the timestamp attribute? :)
                 for $a in $node/@*
                 order by local:sort-key ($a)
                 return $a
@@ -98,7 +96,10 @@ declare function local:change ($node, $axml) {
       default return fn:error(xs:QName("ERROR"), 'huh? local:change of '||xdmp:describe ($node, (), ()))
 };
 
-declare variable $config-dir := '/path/to/configuration-dir/';
+declare variable $local:numeric-masked := (
+    xs:QName ('db:security-database'), xs:QName ('db:schema-database'), xs:QName ('db:triggers-database'),
+    xs:QName ('db:backup-id')
+);
 
 declare variable $local:debug := fn:false();
 
