@@ -39,6 +39,7 @@ return
                 {
                     if ($collection = $header:default-collection) then () else (
                         <hr/>,local:dump-type($collection),
+                        <hr/>,<a href='/export-databases.xqy'>Export databases.xml</a>,
                         <hr/>,header:set-report-form($collection, $basics:home-page),
                         <hr/>,
                         if ($report = 'None') then ()
